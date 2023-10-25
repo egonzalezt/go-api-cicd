@@ -105,7 +105,7 @@ pipeline {
                                                 usernameVariable: 'GITHUB_APP',
                                                 passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
                     sh "git tag ${env.NEW_SEMANTIC_VERSION}"
-                    sh "git push https://$GITHUB_APP:$GITHUB_ACCESS_TOKEN@github.com/egonzalezt/$GITHUB_REPOSITORY.git $env.NEW_SEMANTIC_VERSION"
+                    sh "git push https://$GITHUB_APP:$GITHUB_ACCESS_TOKEN@github.com/egonzalezt/$GITHUB_REPOSITORY.git ${env.NEW_SEMANTIC_VERSION}"
                 }
             }
         }
