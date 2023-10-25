@@ -4,20 +4,12 @@ pipeline {
     }
     tools {
         go 'go-1.20'
-        dockerTool 'docker'
     }
     environment {
         GO111MODULE = 'on'
         GOPATH = "/home/jenkins/go"
     }
     stages {
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.build('your-image-name:tag', '-f Dockerfile .')
-                }
-            }
-        }
         stage('Setup') {
             steps {
                 sh 'mkdir -p $HOME/go/bin'
