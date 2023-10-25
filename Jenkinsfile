@@ -50,6 +50,55 @@ pipeline {
                 archiveArtifacts artifacts: 'coverage.xml', fingerprint: true
             }
         }
+        stage('Determine Semantic Version') {
+            steps {
+                script {
+                    def latestCommitMessage = sh(script: 'git log --pretty=%B -n 1', returnStdout: true).trim()
+                    def majorKeyword = "release("
+                    def minorKeyword = "feat("
+                    def patchKeyword = "fix("
+                    def latestTag
+                    try {
+                        latestTag = sh(script: 'git describe --abbrev=0 --tags', returnStdout: true).trim()
+                    } catch (Exception e) {
+                        echo "No tags found. Setting default tag to 0.0.0."
+                        latestTag = "0.0.0"
+                    }
+                    echo "Latest Tag: ${latestTag}"
+                    def newVersion = latestTag ?: "0.1.0"
+
+                    if (latestCommitMessage.contains(majorKeyword)) {
+                        newVersion = newVersion.tokenize('.').collect { it as Integer }
+                        newVersion[0]++
+                        newVersion[1] = 0
+                    } else if (latestCommitMessage.contains(minorKeyword)) {
+                        newVersion = newVersion.tokenize('.').collect { it as Integer }
+                        newVersion[1]++
+                        newVersion[2] = 0
+                    } else if (latestCommitMessage.contains(patchKeyword)) {
+                        newVersion = newVersion.tokenize('.').collect { it as Integer }
+                        newVersion[2]++
+                    }   else {
+                        error("Commit does not contain the required format to create the version (feat, fix, release).")
+                    }
+
+                    def newSemanticVersion = newVersion.join('.')
+                    echo "New Semantic Version: ${newSemanticVersion}"
+                    currentBuild.description = "Semantic Version: ${newSemanticVersion}"
+                    env.NEW_SEMANTIC_VERSION = newSemanticVersion
+                }
+            }
+        }
+        stage('Create Tag') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'Jenkins-Github-App',
+                                                usernameVariable: 'GITHUB_APP',
+                                                passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
+                    sh "git tag ${env.NEW_SEMANTIC_VERSION}"
+                    sh "git push https://${GITHUB_APP}:${GITHUB_ACCESS_TOKEN}@github.com/egonzalezt/${GITHUB_REPOSITORY}.git ${env.NEW_SEMANTIC_VERSION}"
+                }
+            }
+        }
     }
     post {
         always {
