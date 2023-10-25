@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t your-image-name:your-image-tag -f path/to/your/Dockerfile .'
+                sh 'docker build -t your-image-name:your-image-tag .'
             }
         }
         stage('Setup') {
