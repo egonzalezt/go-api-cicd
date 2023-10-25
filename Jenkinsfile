@@ -21,11 +21,11 @@ pipeline {
         stage('Get Repo Name') {
            steps {
                script {
-                  def determineRepoName = {
-                      return scm.getUserRemoteConfigs()[0].getUrl().tokenize('/').last().split('.')[0]
-                  }
-                  env.GITHUB_REPOSITORY = determineRepoName()
-               }
+                    def repoUrl = sh(returnStdout: true, script: 'git config --get remote.origin.url').trim()
+                    def repoName = repoUrl.tokenize('/')[-1].replaceAll('\\.git', '')
+                    env.GITHUB_REPOSITORY = repoName
+                    echo "Repository name: ${repoName}"
+                }
            }
         }
         stage('Install Dependencies') {
