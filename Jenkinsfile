@@ -10,6 +10,11 @@ pipeline {
         GOPATH = "/home/jenkins/go"
     }
     stages {
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t your-image-name:your-image-tag -f path/to/your/Dockerfile .'
+            }
+        }
         stage('Setup') {
             steps {
                 sh 'mkdir -p $HOME/go/bin'
