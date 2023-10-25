@@ -18,7 +18,7 @@ pipeline {
                 sh 'go install github.com/t-yuki/gocover-cobertura@latest'
             }
         }
-        stage('Get Repo Name')') {
+        stage('Get Repo Name') {
            steps {
                script {
                   def determineRepoName = {
