@@ -12,7 +12,9 @@ pipeline {
     stages {
         stage('Build Docker Image') {
             steps {
-                docker.build('your-image-name:tag', '-f Dockerfile .')
+                script {
+                    docker.build('your-image-name:tag', '-f Dockerfile .')
+                }
             }
         }
         stage('Setup') {
