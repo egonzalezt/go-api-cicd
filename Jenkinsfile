@@ -18,6 +18,16 @@ pipeline {
                 sh 'go install github.com/t-yuki/gocover-cobertura@latest'
             }
         }
+        stage('Get Repo Name')') {
+           steps {
+               script {
+                  def determineRepoName = {
+                      return scm.getUserRemoteConfigs()[0].getUrl().tokenize('/').last().split('.')[0]
+                  }
+                  env.GITHUB_REPOSITORY = determineRepoName()
+               }
+           }
+        }
         stage('Install Dependencies') {
             steps {
                 sh 'go mod tidy'
