@@ -23,14 +23,11 @@ def sendDiscordNotification(String result, String latestCommitMessage, String la
             discordSendConfig.image = "https://cdn.discordapp.com/attachments/1081839152942813324/1165799959052951552/undefined_-_Imgur.gif"
         } else {
             def failureDescription = """
-                # **Pipeline Execution Failed**
-
+            # **Pipeline Execution Failed**
                 * Build Number: [${env.BUILD_NUMBER}](${env.BUILD_URL})
                 * Branch: ${env.BRANCH_NAME}
                 * Failure Reason: ${result}
-
-                # **Additional Details**
-
+            # **Additional Details**
                 * Latest Commit Message: ${latestCommitMessage}
             """
             try {
