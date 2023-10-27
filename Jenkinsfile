@@ -29,7 +29,7 @@ def sendDiscordNotification(String result, String latestCommitMessage, String la
                 * Branch: ${env.BRANCH_NAME}
                 * Failure Reason: ${result}
 
-                ## Additional Details:
+                ## **Additional Details**
 
                 * Latest Commit Message: ${latestCommitMessage}
             """
@@ -75,6 +75,12 @@ pipeline {
         GO111MODULE = 'on'
         GOPATH = "/home/jenkins/go"
     }
+    options {
+        throttleConcurrentBuilds(
+            maximumPerNode: 1,
+            maximumTotalBuilds: 1
+        )
+    }
     stages {
         stage('Setup') {
             steps {
@@ -117,7 +123,7 @@ pipeline {
         }
         stage('Coverage') {
             steps {
-                sh '/home/jenkins/go/bin/gocover-cobertura1 < coverage.txt > coverage.xml'
+                sh '/home/jenkins/go/bin/gocover-cobertura < coverage.txt > coverage.xml'
                 cobertura(coberturaReportFile: 'coverage.xml')
             }
         }
