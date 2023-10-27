@@ -118,7 +118,6 @@ pipeline {
                 sh 'export GOPATH=$HOME/go'
                 sh 'export PATH=$PATH:$GOPATH/bin'
                 sh 'go install github.com/t-yuki/gocover-cobertura@latest'
-                sh 'echo $env.BRANCH_NAME'
             }
         }
         stage('Get Repo Name') {
@@ -172,9 +171,7 @@ pipeline {
         }
         stage('Create Tag') {
             when {
-                expression {
-                    return env.BRANCH_NAME == 'main'
-                }
+                branch 'main'
             }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'Jenkins-Github-App',
