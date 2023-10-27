@@ -1,4 +1,4 @@
-def sendDiscordNotification(String result) {
+def sendDiscordNotification(String result, String latestCommitMessage, String latestCommitAuthor) {
     withCredentials([string(credentialsId: 'discord-webhook-credential-id', variable: 'DISCORD_WEBHOOK_URL')]) {
         def discordSendConfig = [
             footer: JOB_NAME,
@@ -10,6 +10,7 @@ def sendDiscordNotification(String result) {
         ]
 
         if (result == 'SUCCESS') {
+            // If successful, provide details about the successful build
             def successDescription = """
                 **Pipeline Execution Successful**
 
@@ -41,7 +42,22 @@ def sendDiscordNotification(String result) {
         discordSend(discordSendConfig)
     }
 }
+def getLatestCommitInfo() {
+    def commitInfo = sh(
+        script: """
+        latestCommitMessage=\$(git log -1 --pretty=%B)
+        latestCommitAuthor=\$(git log -1 --pretty=%an)
+        echo "LATEST_COMMIT_MESSAGE=\$latestCommitMessage"
+        echo "LATEST_COMMIT_AUTHOR=\$latestCommitAuthor"
+        """,
+        returnStdout: true
+    ).trim()
 
+    def latestCommitMessage = commitInfo.contains("LATEST_COMMIT_MESSAGE=") ? commitInfo.replaceAll("LATEST_COMMIT_MESSAGE=", "") : "Commit message not found"
+    def latestCommitAuthor = commitInfo.contains("LATEST_COMMIT_AUTHOR=") ? commitInfo.replaceAll("LATEST_COMMIT_AUTHOR=", "") : "Commit author not found"
+
+    return [latestCommitMessage, latestCommitAuthor]
+}
 pipeline {
     agent {
         label 'agent'
@@ -157,7 +173,9 @@ pipeline {
     post {
         always {
             script {
-                sendDiscordNotification(currentBuild.currentResult)
+                def result = currentBuild.currentResult
+                def [latestCommitMessage, latestCommitAuthor] = getLatestCommitInfo()
+                sendDiscordNotification(result, latestCommitMessage, latestCommitAuthor)
             }
         }
     }
