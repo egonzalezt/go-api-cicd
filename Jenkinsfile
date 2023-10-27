@@ -49,12 +49,15 @@ def getLatestCommitInfo() {
         latestCommitAuthor=\$(git log -1 --pretty=%an)
         echo "LATEST_COMMIT_MESSAGE=\$latestCommitMessage"
         echo "LATEST_COMMIT_AUTHOR=\$latestCommitAuthor"
+        echo "Commit Details:"
+        echo "\$latestCommitMessage"
+        echo "\$latestCommitAuthor"
         """,
         returnStdout: true
     ).trim()
 
-    def latestCommitMessage = commitInfo.contains("LATEST_COMMIT_MESSAGE=") ? commitInfo.replaceAll("LATEST_COMMIT_MESSAGE=", "") : "Commit message not found"
-    def latestCommitAuthor = commitInfo.contains("LATEST_COMMIT_AUTHOR=") ? commitInfo.replaceAll("LATEST_COMMIT_AUTHOR=", "") : "Commit author not found"
+    def latestCommitMessage = commitInfo.contains("LATEST_COMMIT_MESSAGE=") ? commitInfo.split("LATEST_COMMIT_MESSAGE=")[1].trim() : "Commit message not found"
+    def latestCommitAuthor = commitInfo.contains("LATEST_COMMIT_AUTHOR=") ? commitInfo.split("LATEST_COMMIT_AUTHOR=")[1].trim() : "Commit author not found"
 
     return [latestCommitMessage, latestCommitAuthor]
 }
