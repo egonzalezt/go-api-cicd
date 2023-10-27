@@ -40,3 +40,9 @@ This code supports docker, you can run it using `docker compose`:
 ## Steps
 
 Run `docker compose up --build -d` then open your browser on localhost:5000 and you will see your application
+
+If you also wish to remove networks and volumes associated with this project, you can add the `-v` option to the command:
+
+ ```
+ docker-compose down -v
+ ```
