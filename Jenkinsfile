@@ -117,7 +117,7 @@ pipeline {
         }
         stage('Coverage') {
             steps {
-                sh '/home/jenkins/go/bin/gocover-cobertura < coverage.txt > coverage.xml'
+                sh '/home/jenkins/go/bin/gocover-cobertura1 < coverage.txt > coverage.xml'
                 cobertura(coberturaReportFile: 'coverage.xml')
             }
         }
