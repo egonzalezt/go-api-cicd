@@ -118,6 +118,7 @@ pipeline {
                 sh 'export GOPATH=$HOME/go'
                 sh 'export PATH=$PATH:$GOPATH/bin'
                 sh 'go install github.com/t-yuki/gocover-cobertura@latest'
+                sh 'echo $env.BRANCH_NAME'
             }
         }
         stage('Get Repo Name') {
