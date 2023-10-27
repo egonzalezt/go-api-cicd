@@ -174,7 +174,9 @@ pipeline {
         always {
             script {
                 def result = currentBuild.currentResult
-                def [latestCommitMessage, latestCommitAuthor] = getLatestCommitInfo()
+                def commitInfo = getLatestCommitInfo()
+                def latestCommitMessage = commitInfo[0]
+                def latestCommitAuthor = commitInfo[1]
                 sendDiscordNotification(result, latestCommitMessage, latestCommitAuthor)
             }
         }
