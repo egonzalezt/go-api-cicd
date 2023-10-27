@@ -1,48 +1,84 @@
 # Go APi CI/CD Eafit 2023-2
 
-# Installing dependencies
+
+## Table of Contents
+- [Getting Started](#getting-started)
+  - [Installing Dependencies](#installing-dependencies)
+  - [Running the Service](#running-the-service)
+- [API Endpoints](#api-endpoints)
+- [Testing](#testing)
+- [Running with Docker](#running-with-docker)
+- [Environment Variables](#environment-variables)
+- [License](#license)
+
+## Getting Started
+
+### Installing Dependencies
+
+To set up the required Go dependencies, run the following command in your project's root directory:
+
 ```bash
 go mod tidy
 ```
-# For running the service
+
+## Running the Service
+
+You can start the API service by running the following command:
 
 ```bash
 go run main.go
 ```
 
-# you can make a request to
+# API Endpoints
 
-## GET ALL, POST
+The API provides the following endpoints for managing notes:
 
-[http://localhost:3001/api/notes](http://localhost:3001/api/notes)
+## Get All Notes and Create a New Note
 
-## PUT, GET BY ID
-[http://localhost:3001/api/notes/{id}](http://localhost:3001/api/notes/{id})
+* GET All Notes and POST New Note: http://localhost:3001/api/notes
+## Update and Get Note by ID
+* PUT Note by ID and GET Note by ID: http://localhost:3001/api/notes/{id}
+## Home Page
+* Home Page: http://localhost:3001/
 
-## Home page
-[http://localhost:3001/](http://localhost:3001/)
+# Testing
 
+To run tests and generate a coverage report, you can use the following commands:
 
-# For testing 
-Now generate report
+Generate a coverage report:
 ```bash
 go test -coverprofile=coverage.txt -covermode count ./
 ```
-Now generate xml
+
+Generate an XML report:
+
 ```bash
 /home/$USER/go/bin/gocover-cobertura < coverage.txt > coverage.xml
 ```
 
-# Run docker
+# Running with Docker
 
-This code supports docker, you can run it using `docker compose`:
+This code supports Docker, making it easy to containerize your application. Follow these steps to run the application using Docker:
 
 ## Steps
 
-Run `docker compose up --build -d` then open your browser on localhost:5000 and you will see your application
+1. Build and start the containers:
+```bash
+docker-compose up --build -d
+```
+2. Open your web browser and access the application at localhost:5000.
+If you wish to remove networks and volumes associated with this project, you can use the following command:
 
-If you also wish to remove networks and volumes associated with this project, you can add the `-v` option to the command:
+```bash
+docker-compose down -v
+```
 
- ```
- docker-compose down -v
- ```
+# Environment Variables
+
+The application reads the following environment variable:
+
+`PORT`: You can set the port on which the service runs. If not set, it defaults to `5000`.
+
+# License
+
+This project is licensed under the MIT License - see the [LICENSE](./README.md) file for details.
