@@ -122,7 +122,7 @@ post {
                     webhookURL: DISCORD_WEBHOOK_URL,
                     image: currentBuild.currentResult == 'SUCCESS' ? "https://cdn.discordapp.com/attachments/1081839152942813324/1165799959052951552/undefined_-_Imgur.gif" : "https://cdn.discordapp.com/attachments/1082173364552081449/1165807160236716052/kirbo-mad.gif",
                     thumbnail: "https://cdn.discordapp.com/attachments/678439901544316931/1165804342713000047/icegif-59.gif"
-                }
+                ]
 
                 // Check if the pipeline was successful
                 if (currentBuild.currentResult == 'SUCCESS') {
