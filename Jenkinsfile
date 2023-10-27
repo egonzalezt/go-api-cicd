@@ -107,23 +107,11 @@ pipeline {
     environment {
         GO111MODULE = 'on'
         GOPATH = "/home/jenkins/go"
-        IS_PULL_REQUEST = false
     }
     options {
         disableConcurrentBuilds()
     }
     stages {
-        stage('Check if Pull Request or Merge') {
-            steps {
-                script {
-                    if (env.CHANGE_ID) {
-                        currentBuild.description = "This build is triggered by a change."
-                        IS_PULL_REQUEST = true
-                    }
-                }
-            }
-        }
-
         stage('Setup') {
             steps {
                 sh 'mkdir -p $HOME/go/bin'
@@ -182,9 +170,6 @@ pipeline {
             }
         }
         stage('Create Tag') {
-            when {
-                expression { IS_PULL_REQUEST == false }
-            }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'Jenkins-Github-App',
                                                 usernameVariable: 'GITHUB_APP',
