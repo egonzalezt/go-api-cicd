@@ -114,20 +114,17 @@ post {
     always {
         script {
             withCredentials([string(credentialsId: 'discord-webhook-credential-id', variable: 'DISCORD_WEBHOOK_URL')]) {
+                // Check if the pipeline was successful
+                if (currentBuild.currentResult == 'SUCCESS') {
                 def discordSendConfig = [
                     footer: JOB_NAME,
                     link: env.BUILD_URL,
                     result: currentBuild.currentResult,
                     title: "Jenkins Pipeline Build: ${JOB_NAME}",
                     webhookURL: DISCORD_WEBHOOK_URL,
-                    image: currentBuild.currentResult == 'SUCCESS' ? "https://cdn.discordapp.com/attachments/1081839152942813324/1165799959052951552/undefined_-_Imgur.gif" : "https://cdn.discordapp.com/attachments/1082173364552081449/1165807160236716052/kirbo-mad.gif",
-                    thumbnail: "https://cdn.discordapp.com/attachments/678439901544316931/1165804342713000047/icegif-59.gif"
-                ]
-
-                // Check if the pipeline was successful
-                if (currentBuild.currentResult == 'SUCCESS') {
-                    // If successful, provide details about the successful build
-                    def successDescription = """
+                    image: "https://cdn.discordapp.com/attachments/1081839152942813324/1165799959052951552/undefined_-_Imgur.gif",
+                    thumbnail: "https://cdn.discordapp.com/attachments/678439901544316931/1165804342713000047/icegif-59.gif",
+                    description: """
                         **Pipeline Execution Successful**
 
                         - Build Number: [${env.BUILD_NUMBER}](${env.BUILD_URL})
@@ -136,10 +133,18 @@ post {
                         - Latest Commit Message: ${latestCommitMessage}
                         - Author of the Last Commit: ${latestCommitAuthor}
                     """
-                    discordSendConfig.description = successDescription
+                ]
+                    discordSend(discordSendConfig)
                 } else {
-                    // If the pipeline fails, provide a failure reason
-                    def failureDescription = """
+                    def discordSendConfig = [
+                        footer: JOB_NAME,
+                        link: env.BUILD_URL,
+                        result: currentBuild.currentResult,
+                        title: "Jenkins Pipeline Build: ${JOB_NAME}",
+                        webhookURL: DISCORD_WEBHOOK_URL,
+                        image: "https://cdn.discordapp.com/attachments/1082173364552081449/1165807160236716052/kirbo-mad.gif",
+                        thumbnail: "https://cdn.discordapp.com/attachments/678439901544316931/1165804342713000047/icegif-59.gif",
+                        description: """
                         **Pipeline Execution Failed**
 
                         - Build Number: [${env.BUILD_NUMBER}](${env.BUILD_URL})
@@ -150,11 +155,10 @@ post {
 
                         - Latest Commit Message: ${latestCommitMessage}
                         - Latest Tag: ${latestTag}
-                    """
-                    discordSendConfig.description = failureDescription
+                        """
+                ]
+                    discordSend(discordSendConfig)
                 }
-
-                discordSend(discordSendConfig)
             }
         }
     }
