@@ -1,3 +1,47 @@
+def sendDiscordNotification(String result) {
+    withCredentials([string(credentialsId: 'discord-webhook-credential-id', variable: 'DISCORD_WEBHOOK_URL')]) {
+        def discordSendConfig = [
+            footer: JOB_NAME,
+            link: env.BUILD_URL,
+            result: result,
+            title: "Jenkins Pipeline Build: ${JOB_NAME}",
+            webhookURL: DISCORD_WEBHOOK_URL,
+            thumbnail: "https://cdn.discordapp.com/attachments/678439901544316931/1165804342713000047/icegif-59.gif"
+        ]
+
+        if (result == 'SUCCESS') {
+            def successDescription = """
+                **Pipeline Execution Successful**
+
+                - Build Number: [${env.BUILD_NUMBER}](${env.BUILD_URL})
+                - Branch: ${env.BRANCH_NAME}
+                - New Semantic Version: ${env.NEW_SEMANTIC_VERSION}
+                - Latest Commit Message: ${latestCommitMessage}
+                - Author of the Last Commit: ${latestCommitAuthor}
+            """
+            discordSendConfig.description = successDescription
+            discordSendConfig.image = "https://cdn.discordapp.com/attachments/1081839152942813324/1165799959052951552/undefined_-_Imgur.gif"
+        } else {
+            def failureDescription = """
+                **Pipeline Execution Failed**
+
+                - Build Number: [${env.BUILD_NUMBER}](${env.BUILD_URL})
+                - Branch: ${env.BRANCH_NAME}
+                - Failure Reason: ${result}
+
+                Additional Details:
+
+                - Latest Commit Message: ${latestCommitMessage}
+                - Latest Tag: ${latestTag}
+            """
+            discordSendConfig.description = failureDescription
+            discordSendConfig.image = "https://cdn.discordapp.com/attachments/1082173364552081449/1165807160236716052/kirbo-mad.gif"
+        }
+
+        discordSend(discordSendConfig)
+    }
+}
+
 pipeline {
     agent {
         label 'agent'
@@ -116,51 +160,5 @@ pipeline {
                 sendDiscordNotification(currentBuild.currentResult)
             }
         }
-    }
-}
-
-def sendDiscordNotification(String result) {
-    withCredentials([string(credentialsId: 'discord-webhook-credential-id', variable: 'DISCORD_WEBHOOK_URL')]) {
-        def discordSendConfig = [
-            footer: JOB_NAME,
-            link: env.BUILD_URL,
-            result: result,
-            title: "Jenkins Pipeline Build: ${JOB_NAME}",
-            webhookURL: DISCORD_WEBHOOK_URL,
-            thumbnail: "https://cdn.discordapp.com/attachments/678439901544316931/1165804342713000047/icegif-59.gif"
-        ]
-
-        if (result == 'SUCCESS') {
-            // If successful, provide details about the successful build
-            def successDescription = """
-                **Pipeline Execution Successful**
-
-                - Build Number: [${env.BUILD_NUMBER}](${env.BUILD_URL})
-                - Branch: ${env.BRANCH_NAME}
-                - New Semantic Version: ${env.NEW_SEMANTIC_VERSION}
-                - Latest Commit Message: ${latestCommitMessage}
-                - Author of the Last Commit: ${latestCommitAuthor}
-            """
-            discordSendConfig.description = successDescription
-            discordSendConfig.image = "https://cdn.discordapp.com/attachments/1081839152942813324/1165799959052951552/undefined_-_Imgur.gif"
-        } else {
-            // If the pipeline fails, provide a failure reason
-            def failureDescription = """
-                **Pipeline Execution Failed**
-
-                - Build Number: [${env.BUILD_NUMBER}](${env.BUILD_URL})
-                - Branch: ${env.BRANCH_NAME}
-                - Failure Reason: ${result}
-
-                Additional Details:
-
-                - Latest Commit Message: ${latestCommitMessage}
-                - Latest Tag: ${latestTag}
-            """
-            discordSendConfig.description = failureDescription
-            discordSendConfig.image = "https://cdn.discordapp.com/attachments/1082173364552081449/1165807160236716052/kirbo-mad.gif"
-        }
-
-        discordSend(discordSendConfig)
     }
 }
