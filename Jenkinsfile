@@ -27,7 +27,7 @@ def sendDiscordNotification(String result, String latestCommitMessage, String la
                 * Branch: ${env.BRANCH_NAME}
                 * Failure Reason: ${result}
 
-            ## **Additional Details**
+            **Additional Details**
                 * Latest Commit Message: ${latestCommitMessage}
             """
             try {
