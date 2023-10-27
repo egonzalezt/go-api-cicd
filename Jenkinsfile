@@ -76,10 +76,7 @@ pipeline {
         GOPATH = "/home/jenkins/go"
     }
     options {
-        throttleConcurrentBuilds(
-            maximumPerNode: 1,
-            maximumTotalBuilds: 1
-        )
+        disableConcurrentBuilds()
     }
     stages {
         stage('Setup') {
