@@ -10,30 +10,29 @@ def sendDiscordNotification(String result, String latestCommitMessage, String la
         ]
 
         if (result == 'SUCCESS') {
-            // If successful, provide details about the successful build
             def successDescription = """
-                **Pipeline Execution Successful**
+                # **Pipeline Execution Successful**
 
-                - Build Number: [${env.BUILD_NUMBER}](${env.BUILD_URL})
-                - Branch: ${env.BRANCH_NAME}
-                - New Semantic Version: ${env.NEW_SEMANTIC_VERSION}
-                - Latest Commit Message: ${latestCommitMessage}
-                - Author of the Last Commit: ${latestCommitAuthor}
+                * Build Number: [${env.BUILD_NUMBER}](${env.BUILD_URL})
+                * Branch: ${env.BRANCH_NAME}
+                * New Semantic Version: ${env.NEW_SEMANTIC_VERSION}
+                * Latest Commit Message: ${latestCommitMessage}
+                * Author of the Last Commit: ${latestCommitAuthor}
             """
             discordSendConfig.description = successDescription
             discordSendConfig.image = "https://cdn.discordapp.com/attachments/1081839152942813324/1165799959052951552/undefined_-_Imgur.gif"
         } else {
             def failureDescription = """
-                **Pipeline Execution Failed**
+                # **Pipeline Execution Failed**
 
-                - Build Number: [${env.BUILD_NUMBER}](${env.BUILD_URL})
-                - Branch: ${env.BRANCH_NAME}
-                - Failure Reason: ${result}
+                * Build Number: [${env.BUILD_NUMBER}](${env.BUILD_URL})
+                * Branch: ${env.BRANCH_NAME}
+                * Failure Reason: ${result}
 
-                Additional Details:
+                ## Additional Details:
 
-                - Latest Commit Message: ${latestCommitMessage}
-                - Latest Tag: ${latestTag}
+                * Latest Commit Message: ${latestCommitMessage}
+                * Latest Tag: ${latestTag}
             """
             discordSendConfig.description = failureDescription
             discordSendConfig.image = "https://cdn.discordapp.com/attachments/1082173364552081449/1165807160236716052/kirbo-mad.gif"
@@ -47,20 +46,19 @@ def getLatestCommitInfo() {
         script: """
         latestCommitMessage=\$(git log -1 --pretty=%B)
         latestCommitAuthor=\$(git log -1 --pretty=%an)
-        echo "LATEST_COMMIT_MESSAGE=\$latestCommitMessage"
-        echo "LATEST_COMMIT_AUTHOR=\$latestCommitAuthor"
         echo "Commit Details:"
-        echo "\$latestCommitMessage"
-        echo "\$latestCommitAuthor"
+        echo "Message: \$latestCommitMessage"
+        echo "Author: \$latestCommitAuthor"
         """,
         returnStdout: true
     ).trim()
 
-    def latestCommitMessage = commitInfo.contains("LATEST_COMMIT_MESSAGE=") ? commitInfo.split("LATEST_COMMIT_MESSAGE=")[1].trim() : "Commit message not found"
-    def latestCommitAuthor = commitInfo.contains("LATEST_COMMIT_AUTHOR=") ? commitInfo.split("LATEST_COMMIT_AUTHOR=")[1].trim() : "Commit author not found"
+    def latestCommitMessage = commitInfo.contains("Message:") ? commitInfo.split("Message:")[1].trim() : "Commit message not found"
+    def latestCommitAuthor = commitInfo.contains("Author:") ? commitInfo.split("Author:")[1].trim() : "Commit author not found"
 
     return [latestCommitMessage, latestCommitAuthor]
 }
+
 pipeline {
     agent {
         label 'agent'
