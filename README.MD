@@ -39,4 +39,4 @@ This code supports docker, you can run it using `docker compose`:
 
 ## Steps
 
-Run `docker compose up -d --build` then open your browser on localhost:5000 and you will see your application
+Run `docker compose up --build -d` then open your browser on localhost:5000 and you will see your application
