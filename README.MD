@@ -1,6 +1,5 @@
 # Go APi CI/CD Eafit 2023-2
 
-
 ## Table of Contents
 - [Getting Started](#getting-started)
   - [Installing Dependencies](#installing-dependencies)
