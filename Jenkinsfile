@@ -46,19 +46,17 @@ def getLatestCommitInfo() {
         script: """
         latestCommitMessage=\$(git log -1 --pretty=%B)
         latestCommitAuthor=\$(git log -1 --pretty=%an)
-        echo "Commit Details:"
-        echo "Message: \$latestCommitMessage"
+        echo "Latest Commit Message: \$latestCommitMessage"
         echo "Author: \$latestCommitAuthor"
         """,
         returnStdout: true
     ).trim()
 
-    def latestCommitMessage = commitInfo.contains("Message:") ? commitInfo.split("Message:")[1].trim() : "Commit message not found"
+    def latestCommitMessage = commitInfo.contains("Latest Commit Message:") ? commitInfo.split("Latest Commit Message:")[1].trim() : "Commit message not found"
     def latestCommitAuthor = commitInfo.contains("Author:") ? commitInfo.split("Author:")[1].trim() : "Commit author not found"
 
     return [latestCommitMessage, latestCommitAuthor]
 }
-
 pipeline {
     agent {
         label 'agent'
