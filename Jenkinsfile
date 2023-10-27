@@ -32,8 +32,15 @@ def sendDiscordNotification(String result, String latestCommitMessage, String la
                 ## Additional Details:
 
                 * Latest Commit Message: ${latestCommitMessage}
-                * Latest Tag: ${latestTag}
             """
+            try {
+                latestTag = sh(script: 'git describe --abbrev=0 --tags', returnStdout: true).trim()
+                failureDescription += """
+                    * Latest Tag: ${latestTag}
+                """
+            } catch (Exception e) {
+                echo "No tags found. Setting default tag to 0.0.0"
+            }
             discordSendConfig.description = failureDescription
             discordSendConfig.image = "https://cdn.discordapp.com/attachments/1082173364552081449/1165807160236716052/kirbo-mad.gif"
         }
@@ -110,7 +117,7 @@ pipeline {
         }
         stage('Coverage') {
             steps {
-                sh '/home/jenkins/go/bin/gocover-coberktura < coverage.txt > coverage.xml'
+                sh '/home/jenkins/go/bin/gocover-cobertura < coverage.txt > coverage.xml'
                 cobertura(coberturaReportFile: 'coverage.xml')
             }
         }
@@ -130,7 +137,7 @@ pipeline {
                     try {
                         latestTag = sh(script: 'git describe --abbrev=0 --tags', returnStdout: true).trim()
                     } catch (Exception e) {
-                        echo "No tags found. Setting default tag to 0.0.0."
+                        echo "No tags found. Setting default tag to 0.0.0"
                         latestTag = "0.0.0"
                     }
                     echo "Latest Tag: ${latestTag}"
