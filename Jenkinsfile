@@ -171,6 +171,19 @@ pipeline {
                 }
             }
         }
+        stage('Build Docker Image and Publish') {
+            steps {
+                script {
+                    def dockerImageName = "vasitos/${GITHUB_REPOSITORY}"
+                    def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
+                    sh "docker build -t ${dockerImageName}:${dockerImageTag} ."
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                    }
+                    sh "docker push ${dockerImageName}:${dockerImageTag}"
+                }
+            }
+        }
         stage('Create Tag') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'jenkins-github-app',
@@ -178,19 +191,6 @@ pipeline {
                                                 passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
                     sh "git tag ${env.NEW_SEMANTIC_VERSION}"
                     sh "git push https://$GITHUB_APP:$GITHUB_ACCESS_TOKEN@github.com/egonzalezt/${GITHUB_REPOSITORY}.git ${env.NEW_SEMANTIC_VERSION}"
-                }
-            }
-        }
-        stage('Build Docker Image and Publish') {
-            steps {
-                script {
-                    def dockerImageName = 'vasitos/go-ci-cd'
-                    def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
-                    sh "docker build -t ${dockerImageName}:${dockerImageTag} ."
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh 'docker login -u $USERNAME -p $PASSWORD'
-                    }
-                    sh "docker push ${dockerImageName}:${dockerImageTag}"
                 }
             }
         }
