@@ -203,28 +203,26 @@ pipeline {
                 }
             }
         }
-stage('Deploy Docker Image') {
-    steps {
-        script {
-            def dockerImageName = "vasitos/${GITHUB_REPOSITORY}"
-            def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
-            def containerName = "${GITHUB_REPOSITORY}-container"
-            def existingContainerId = sh(
-                script: "docker ps -aqf name=${containerName}",
-                returnStatus: true
-            ).trim()
+        stage('Deploy Docker Image') {
+            steps {
+                script {
+                    def dockerImageName = "vasitos/${GITHUB_REPOSITORY}"
+                    def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
+                    def containerName = "${GITHUB_REPOSITORY}-container"
+                    def existingContainerId = sh(
+                        script: "docker ps -f name=${containerName}",
+                        returnStatus: true
+                    ).trim()
 
-            if (existingContainerId) {                
-                sh "docker stop ${containerName}"
-                sh "docker rm ${containerName}"
-                sh "docker rmi ${dockerImageName}:${dockerImageTag}"
+                    if (existingContainerId) {                
+                        sh "docker stop ${containerName}"
+                        sh "docker rm ${containerName}"
+                        sh "docker rmi ${dockerImageName}:${dockerImageTag}"
+                    }
+                    sh "docker run -d --name ${containerName} -p 80:80 ${dockerImageName}:${dockerImageTag}"
+                }
             }
-            sh "docker run -d --name ${containerName} -p 80:80 ${dockerImageName}:${dockerImageTag}"
         }
-    }
-}
-
-
     }
     post {
         always {
