@@ -119,6 +119,7 @@ pipeline {
                 sh 'export GOPATH=$HOME/go'
                 sh 'export PATH=$PATH:$GOPATH/bin'
                 sh 'go install github.com/t-yuki/gocover-cobertura@latest'
+                sh 'docker ps'
             }
         }
         stage('Get Repo Name') {
