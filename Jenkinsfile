@@ -210,10 +210,10 @@ pipeline {
                     def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
                     def containerName = "${GITHUB_REPOSITORY}-container"
                     def existingContainerId = sh(
-                        script: "docker ps -f name=${containerName}",
+                        script: "docker ps -q -f name=${containerName}",
                         returnStatus: true
-                    ).toString().trim()
-                    if (existingContainerId) {                
+                    ).trim()
+                    if (existingContainerId) {
                         sh "docker stop ${containerName}"
                         sh "docker rm ${containerName}"
                         sh "docker rmi ${dockerImageName}:${dockerImageTag}"
