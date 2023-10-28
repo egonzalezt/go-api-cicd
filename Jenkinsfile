@@ -187,10 +187,10 @@ pipeline {
                     def dockerImageName = 'vasitos/go-ci-cd'
                     def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
                     sh "docker build -t ${dockerImageName}:${dockerImageTag} ."
-                    withDockerRegistry([credentialsId: 'docker-hub-password', 
-                    url: 'https://index.docker.io/v1/']) {
-                        sh "docker push ${dockerImageName}:${dockerImageTag}"
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
                     }
+                    sh "docker push ${dockerImageName}:${dockerImageTag}"
                 }
             }
         }
