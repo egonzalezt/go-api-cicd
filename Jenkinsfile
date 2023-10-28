@@ -173,7 +173,7 @@ pipeline {
         }
         stage('Create Tag') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'Jenkins-Github-App',
+                withCredentials([usernamePassword(credentialsId: 'jenkins-github-app',
                                                 usernameVariable: 'GITHUB_APP',
                                                 passwordVariable: 'GITHUB_ACCESS_TOKEN')]) {
                     sh "git tag ${env.NEW_SEMANTIC_VERSION}"
