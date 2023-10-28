@@ -177,10 +177,18 @@ pipeline {
                     def dockerImageName = "vasitos/${GITHUB_REPOSITORY}"
                     def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
                     sh "docker build -t ${dockerImageName}:${dockerImageTag} ."
+                    publishChecks name: 'build', title: 'Build docker image Check', summary: 'Build docker image through pipeline',
+                    text: 'Build current docker image',
+                    detailsURL: "${env.BUILD_URL}checks/${currentBuild.number}",
+                    actions: [[label:'build-action', description:'Build action', identifier:'build-identifier']]
                     withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
                     }
                     sh "docker push ${dockerImageName}:${dockerImageTag}"
+                    publishChecks name: 'publish', title: 'Publish docker image Check', summary: 'Publish docker image through pipeline',
+                    text: "Publish current docker image ${dockerImageName}:${dockerImageTag}",
+                    detailsURL: "${env.BUILD_URL}checks/${currentBuild.number}",
+                    actions: [[label:'publish-action', description:'Publish action', identifier:'publish-identifier']]
                 }
             }
         }
