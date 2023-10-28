@@ -197,7 +197,7 @@ pipeline {
         stage('Cleanup') {
             steps {
                 script {
-                    def dockerImageName = 'vasitos/go-ci-cd'
+                    def dockerImageName = "vasitos/${GITHUB_REPOSITORY}"
                     def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
                     sh "docker rmi ${dockerImageName}:${dockerImageTag}"
                 }
