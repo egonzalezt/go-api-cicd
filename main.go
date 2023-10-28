@@ -27,7 +27,7 @@ var notes = []Note{
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "🏠 Página principal!!")
+	fmt.Fprintf(w, "Hola desde la pagina")
 }
 
 func Hello(ctx *gin.Context) {
