@@ -212,7 +212,7 @@ pipeline {
 
                     sh "docker stop ${containerName}"
                     sh "docker rm ${containerName}"
-                    sh "docker run -d --name ${containerName} -p 5000:500 vasitos/${dockerImageName}:${dockerImageTag}"
+                    sh "docker run -d --name ${containerName} -p 5000:500 ${dockerImageName}:${dockerImageTag}"
                 }
             }
         }
