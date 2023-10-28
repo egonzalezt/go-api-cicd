@@ -215,7 +215,7 @@ pipeline {
                     } catch (Exception error) {
                         echo "Failed to stop or deleting the container: ${error.message}"
                     }
-                    sh "docker run -d --name ${containerName} -p 5000:500 ${dockerImageName}:${dockerImageTag}"
+                    sh "docker run -d --name ${containerName} -p 5000:5000 ${dockerImageName}:${dockerImageTag}"
                 }
             }
         }
