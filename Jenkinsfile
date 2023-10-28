@@ -216,6 +216,10 @@ pipeline {
                         echo "Failed to stop or deleting the container: ${error.message}"
                     }
                     sh "docker run -d --name ${containerName} -p 5000:5000 ${dockerImageName}:${dockerImageTag}"
+                    publishChecks name: 'deploy', title: 'Deploy', summary: 'Deploy through pipeline',
+                    text: 'Deploy in pipeline script',
+                    detailsURL: "${env.BUILD_URL}checks/${currentBuild.number}",
+                    actions: [[label:'deploy-action', description:'Deploy action', identifier:'deploy-identifier']]
                 }
             }
         }
