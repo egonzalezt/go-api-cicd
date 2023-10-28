@@ -212,7 +212,7 @@ pipeline {
                     def existingContainerId = sh(
                         script: "docker ps -f name=${containerName}",
                         returnStatus: true
-                    ).trim()
+                    ).toString().trim()
                     if (existingContainerId) {                
                         sh "docker stop ${containerName}"
                         sh "docker rm ${containerName}"
