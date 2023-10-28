@@ -203,28 +203,28 @@ pipeline {
                 }
             }
         }
-    stage('Deploy Docker Image') {
-        steps {
-            script {
-                def dockerImageName = "vasitos/${GITHUB_REPOSITORY}"
-                def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
-                def containerName = "${GITHUB_REPOSITORY}-container"
-                def existingContainer = sh(script: "docker ps -aqf name=${containerName}", returnStatus: true).trim()
+        stage('Deploy Docker Image') {
+            steps {
+                script {
+                    def dockerImageName = "vasitos/${GITHUB_REPOSITORY}"
+                    def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
+                    def containerName = "${GITHUB_REPOSITORY}-container"
+                    def existingContainerId = sh(script: "docker ps -aqf name=${containerName}", returnStatus: true).trim()
 
-                if (existingContainer) {
-                    echo "Stopping and removing the existing container: ${containerName}"
-                    sh "docker stop ${containerName}"
-                    sh "docker rm ${containerName}"
-                    def existingImage = sh(script: "docker images -q ${dockerImageName}:${dockerImageTag}", returnStatus: true).trim()
-                    if (existingImage) {
-                        echo "Removing the existing image: ${dockerImageName}:${dockerImageTag}"
-                        sh "docker rmi ${dockerImageName}:${dockerImageTag}"
+                    if (existingContainerId) {
+                        echo "Stopping and removing the existing container: ${containerName}"
+                        sh "docker stop ${containerName}"
+                        sh "docker rm ${containerName}"
+                        def existingImage = sh(script: "docker images -q ${dockerImageName}:${dockerImageTag}", returnStatus: true).trim()
+                        if (existingImage) {
+                            echo "Removing the existing image: ${dockerImageName}:${dockerImageTag}"
+                            sh "docker rmi ${dockerImageName}:${dockerImageTag}"
+                        }
                     }
+                    sh "docker run -d --name ${containerName} -p 80:80 ${dockerImageName}:${dockerImageTag}"
                 }
-                sh "docker run -d --name ${containerName} -p 80:80 ${dockerImageName}:${dockerImageTag}"
             }
         }
-    }
 
     }
     post {
