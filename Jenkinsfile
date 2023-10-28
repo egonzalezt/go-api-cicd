@@ -102,7 +102,7 @@ pipeline {
         label 'agent'
     }
     tools {
-        go 'go-1.20',
+        go 'go-1.20'
         docker 'docker'
     }
     environment {
