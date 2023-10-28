@@ -214,7 +214,8 @@ stage('Deploy Docker Image') {
                 returnStatus: true
             ).trim()
 
-            if (existingContainerId) {                sh "docker stop ${containerName}"
+            if (existingContainerId) {                
+                sh "docker stop ${containerName}"
                 sh "docker rm ${containerName}"
                 sh "docker rmi ${dockerImageName}:${dockerImageTag}"
             }
