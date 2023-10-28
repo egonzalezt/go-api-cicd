@@ -209,16 +209,10 @@ pipeline {
                     def dockerImageName = "vasitos/${GITHUB_REPOSITORY}"
                     def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
                     def containerName = "${GITHUB_REPOSITORY}-container"
-                    def existingContainerId = sh(
-                        script: "docker ps -q -f name=${containerName}",
-                        returnStatus: true
-                    ).trim()
-                    if (existingContainerId) {
-                        sh "docker stop ${containerName}"
-                        sh "docker rm ${containerName}"
-                        sh "docker rmi ${dockerImageName}:${dockerImageTag}"
-                    }
-                    sh "docker run -d --name ${containerName} -p 80:80 ${dockerImageName}:${dockerImageTag}"
+
+                    sh "docker stop ${containerName}"
+                    sh "docker rm ${containerName}"
+                    sh "docker run -d --name ${containerName} -p 5000:500 vasitos/${dockerImageName}:${dockerImageTag}"
                 }
             }
         }
