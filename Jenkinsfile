@@ -170,11 +170,6 @@ pipeline {
             }
         }
         stage('Create Tag') {
-            when {
-                expression { 
-                    return env.BRANCH_NAME == 'main'
-                }
-            }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'Jenkins-Github-App',
                                                 usernameVariable: 'GITHUB_APP',
