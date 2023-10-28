@@ -103,7 +103,7 @@ pipeline {
     }
     tools {
         go 'go-1.20'
-        docker 'docker'
+        dockerTool 'docker'
     }
     environment {
         GO111MODULE = 'on'
