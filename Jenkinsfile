@@ -209,9 +209,12 @@ pipeline {
                     def dockerImageName = "vasitos/${GITHUB_REPOSITORY}"
                     def dockerImageTag = "${env.NEW_SEMANTIC_VERSION}"
                     def containerName = "${GITHUB_REPOSITORY}-container"
-
-                    sh "docker stop ${containerName}"
-                    sh "docker rm ${containerName}"
+                    try {
+                        sh "docker stop ${containerName}"
+                        sh "docker rm ${containerName}"
+                    } catch (Exception error) {
+                        echo "Failed to stop or deleting the container: ${error.message}"
+                    }
                     sh "docker run -d --name ${containerName} -p 5000:500 ${dockerImageName}:${dockerImageTag}"
                 }
             }
